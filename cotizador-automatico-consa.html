@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Cotizaciones · CONSA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --carmesi:#8B1A2F;
+    --gris:#787878;
+    --gris-claro:#e6e6e6;
+    --gris-bg:#f2f2f2;
+    --negro:#1a1a1a;
+    --blanco:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Montserrat',sans-serif;color:var(--negro);background:var(--gris-bg)}
+
+  /* ---------- LAYOUT APP ---------- */
+  .app{display:grid;grid-template-columns:380px 1fr;min-height:100vh}
+  .controls{background:#fff;border-right:1px solid var(--gris-claro);padding:24px;overflow-y:auto;height:100vh;position:sticky;top:0}
+  .lienzo{padding:32px;display:flex;justify-content:center;align-items:flex-start}
+
+  .controls h1{font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--negro)}
+  .controls h1 span{color:var(--carmesi)}
+  .controls .sub{font-size:11px;color:var(--gris);margin-bottom:20px;margin-top:2px}
+
+  fieldset{border:1px solid var(--gris-claro);border-radius:8px;padding:14px;margin-bottom:14px}
+  legend{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--carmesi);padding:0 6px}
+  label{display:block;font-size:11px;font-weight:600;color:var(--gris);margin:8px 0 3px}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:8px 10px;border:1px solid var(--gris-claro);border-radius:6px;
+    font-family:'Montserrat',sans-serif;font-size:13px;color:var(--negro);background:#fff}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--carmesi)}
+  textarea{resize:vertical;min-height:70px;font-size:12px}
+  .restore{float:right;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;color:var(--carmesi);background:none;border:none;cursor:pointer;text-transform:none;letter-spacing:0}
+  .restore:hover{text-decoration:underline}
+  .inc-block{margin-bottom:8px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .radio-group{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .radio-group label{display:flex;align-items:center;gap:8px;font-weight:500;color:var(--negro);font-size:12px;margin:0;cursor:pointer}
+  .radio-group input{width:auto;margin:0}
+  details{margin-top:6px}
+  summary{font-size:11px;font-weight:600;color:var(--gris);cursor:pointer;padding:6px 0}
+  .hint{font-size:10px;color:var(--gris);margin-top:3px;line-height:1.4}
+
+  .btn{width:100%;padding:13px;border:none;border-radius:8px;background:var(--carmesi);color:#fff;
+    font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;cursor:pointer;margin-top:8px}
+  .btn:hover{background:#741626}
+  .btn-print-hint{font-size:10px;color:var(--gris);text-align:center;margin-top:8px;line-height:1.5}
+
+  /* ---------- HOJA (DOCUMENTO) ---------- */
+  #hoja{background:#fff;width:794px;min-height:1123px;padding:54px 56px;
+    box-shadow:0 4px 24px rgba(0,0,0,.12);position:relative}
+
+  .doc-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--negro);padding-bottom:18px}
+  .wordmark{line-height:1}
+  .wordmark .mark{font-family:'Cinzel',serif;font-weight:600;font-size:42px;letter-spacing:1px;color:var(--gris)}
+  .wordmark .mark .a{color:var(--carmesi)}
+  .wordmark .rule{height:1.5px;background:var(--gris);margin:5px 0 4px}
+  .wordmark .tag{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:2.5px;color:var(--gris);text-transform:none}
+  .doc-meta{text-align:right;font-size:11px;color:var(--gris);line-height:1.7}
+  .doc-meta b{color:var(--negro);font-weight:600}
+
+  .doc-title{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--carmesi);text-transform:uppercase;margin:26px 0 4px}
+  .doc-title-sub{font-size:11px;color:var(--gris);margin-bottom:22px}
+
+  .cliente-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 30px;font-size:12px;margin-bottom:26px}
+  .cliente-grid .c-lbl{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--gris)}
+  .cliente-grid .c-val{color:var(--negro);border-bottom:1px solid var(--gris-claro);padding-bottom:5px;margin-bottom:6px;min-height:18px}
+
+  .sec-h{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--negro);
+    border-left:3px solid var(--carmesi);padding-left:9px;margin:0 0 12px}
+
+  /* paquete único */
+  .paq-box{border:1px solid var(--gris-claro);border-radius:8px;overflow:hidden;margin-bottom:22px}
+  .paq-top{background:var(--negro);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+  .paq-top .nombre{font-size:16px;font-weight:700}
+  .paq-top .badge{font-size:9px;font-weight:700;letter-spacing:1px;background:var(--carmesi);padding:4px 10px;border-radius:4px}
+  .paq-body{padding:16px 18px}
+  .incluye{font-size:12px;color:var(--negro);line-height:1.7;margin-bottom:14px}
+  .incluye li{margin-left:16px;margin-bottom:3px}
+  .incluye li::marker{color:var(--carmesi)}
+
+  .precio-tabla{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  .precio-tabla th{text-align:left;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gris);padding:6px 8px;border-bottom:1px solid var(--gris-claro)}
+  .precio-tabla td{padding:9px 8px;border-bottom:1px solid var(--gris-claro);color:var(--negro)}
+  .precio-tabla tr.destacado td{background:#faf3f4;font-weight:600}
+  .precio-tabla .monto{font-weight:700;text-align:right;white-space:nowrap}
+  .precio-tabla .monto-grande{color:var(--carmesi);font-size:15px}
+  .pago-nota{font-size:10px;color:var(--gris);margin-top:8px;font-style:italic}
+
+  .total-line{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--negro);margin-top:14px;padding-top:12px}
+  .total-line .lbl{font-size:12px;font-weight:600;color:var(--negro)}
+  .total-line .val{font-size:24px;font-weight:700;color:var(--carmesi)}
+  .iva-mini{font-size:10px;color:var(--gris);text-align:right;margin-top:3px}
+
+  /* menú comparativo */
+  .menu3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px}
+  .card{border:1px solid var(--gris-claro);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+  .card.rec{border:2px solid var(--carmesi)}
+  .card .c-head{padding:12px;text-align:center;background:var(--gris-bg)}
+  .card.rec .c-head{background:var(--carmesi);color:#fff}
+  .card .c-rec-badge{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .card .c-name{font-size:13px;font-weight:700;line-height:1.2}
+  .card .c-price{font-size:22px;font-weight:700;color:var(--carmesi);text-align:center;padding:14px 8px 4px}
+  .card.rec .c-price{color:var(--carmesi)}
+  .card .c-price small{display:block;font-size:9px;font-weight:500;color:var(--gris);margin-top:2px}
+  .card .c-feats{padding:6px 14px 16px;font-size:10.5px;color:var(--negro);line-height:1.6;flex:1}
+  .card .c-feats li{margin-left:14px;margin-bottom:4px}
+  .card .c-feats li::marker{color:var(--carmesi)}
+
+  .condiciones{font-size:9.5px;color:var(--gris);line-height:1.6;border-top:1px solid var(--gris-claro);padding-top:12px;margin-top:8px;white-space:pre-wrap}
+
+  .doc-foot{position:absolute;bottom:40px;left:56px;right:56px;border-top:1px solid var(--gris-claro);padding-top:12px;
+    display:flex;justify-content:space-between;font-size:10px;color:var(--gris)}
+  .doc-foot b{color:var(--negro)}
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    @page{size:A4;margin:0}
+    body{background:#fff}
+    .controls{display:none}
+    .app{display:block}
+    .lienzo{padding:0}
+    #hoja{box-shadow:none;width:100%;min-height:auto;padding:48px 50px}
+    .doc-foot{position:fixed}
+  }
+  @media(max-width:900px){
+    .app{grid-template-columns:1fr}
+    .controls{height:auto;position:static}
+    .lienzo{overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= CONTROLES ================= -->
+  <div class="controls no-print">
+    <h1>Generador de Cotizaciones · <span>CONS<span style="color:var(--carmesi)">A</span></span></h1>
+    <div class="sub">Captura → Generar PDF → Guardar/Enviar</div>
+
+    <fieldset>
+      <legend>Modo</legend>
+      <div class="radio-group">
+        <label><input type="radio" name="modo" value="unico" checked> Cotización formal — 1 paquete</label>
+        <label><input type="radio" name="modo" value="menu"> Menú comparativo — 3 opciones</label>
+      </div>
+      <div id="selPaqWrap">
+        <label>Paquete a cotizar</label>
+        <select id="paqSel">
+          <option value="puntual">Paquete 1 · Intervención Puntual</option>
+          <option value="blindaje" selected>Paquete 2 · Blindaje Total (recomendado)</option>
+          <option value="continua">Paquete 3 · Protección Continua</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Datos del cliente</legend>
+      <label>Cliente / Empresa</label>
+      <input type="text" id="cliente" placeholder="Restaurante La Marmota">
+      <label>Atención a (contacto)</label>
+      <input type="text" id="contacto" placeholder="Gerente / responsable">
+      <label>Domicilio / Zona del servicio</label>
+      <input type="text" id="domicilio" placeholder="Puerta Real, Corregidora">
+      <div class="row">
+        <div>
+          <label>Tipo de inmueble</label>
+          <select id="tipo">
+            <option value="">—</option>
+            <option>Residencial</option><option>Restaurante</option>
+            <option>Cafetería</option><option>Bodega / Almacén</option>
+            <option>Industria alimentaria</option><option>Oficina</option>
+            <option>Comercial</option>
+          </select>
+        </div>
+        <div>
+          <label>m² aprox.</label>
+          <input type="number" id="metraje" placeholder="120">
+        </div>
+      </div>
+      <label>Plaga(s) objetivo</label>
+      <input type="text" id="plaga" placeholder="Cucaracha alemana">
+    </fieldset>
+
+    <fieldset>
+      <legend>Precio</legend>
+      <label>Precio base — Paquete 1 (1 visita, total) <span style="color:var(--carmesi)">*</span></label>
+      <input type="number" id="base" value="1340">
+      <div class="hint">Único dato que cambias por cotización. Lo demás se calcula y queda editable abajo.</div>
+
+      <details>
+        <summary>Ajustes avanzados (factores y montos)</summary>
+        <div class="row">
+          <div><label>Factor Liquidación</label><input type="number" step="0.01" id="fLiq" value="0.80"></div>
+          <div><label>Factor 2 exhibiciones</label><input type="number" step="0.01" id="f2ex" value="0.90"></div>
+        </div>
+        <div class="row">
+          <div><label>Desc. Trimestral %</label><input type="number" id="dTri" value="8"></div>
+          <div><label>Desc. Bimestral %</label><input type="number" id="dBim" value="12"></div>
+        </div>
+        <div class="row">
+          <div><label>Desc. Mensual %</label><input type="number" id="dMen" value="15"></div>
+          <div><label>Factor Grand Slam</label><input type="number" step="0.01" id="fGS" value="0.75"></div>
+        </div>
+        <div class="hint">Si algún número no coincide con tu Cotizador v4, edítalo aquí o directo en el documento.</div>
+        <label>Visitas Blindaje Total</label>
+        <input type="number" id="visBlindaje" value="3">
+      </details>
+
+      <label>Compromiso destacado (Protección Continua / menú)</label>
+      <select id="tier">
+        <option value="men">Mensual (12/año)</option>
+        <option value="bim">Bimestral (6/año)</option>
+        <option value="tri">Trimestral (4/año)</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:500;color:var(--negro);cursor:pointer">
+        <input type="checkbox" id="aplicaGS" checked style="width:auto;margin:0"> Aplicar tarifa Grand Slam (1.er mes)
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Qué incluye el servicio</legend>
+      <div class="hint" style="margin-bottom:8px">Un punto por línea. Edita libremente según el caso (ej. solo aplicación exterior).</div>
+      <div id="incPuntualWrap" class="inc-block">
+        <label>Intervención Puntual <button type="button" class="restore" data-paq="puntual">↺ por defecto</button></label>
+        <textarea id="incPuntual" rows="4"></textarea>
+      </div>
+      <div id="incBlindajeWrap" class="inc-block">
+        <label>Blindaje Total <button type="button" class="restore" data-paq="blindaje">↺ por defecto</button></label>
+        <textarea id="incBlindaje" rows="5"></textarea>
+      </div>
+      <div id="incContinuaWrap" class="inc-block">
+        <label>Protección Continua <button type="button" class="restore" data-paq="continua">↺ por defecto</button></label>
+        <textarea id="incContinua" rows="5"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>IVA</legend>
+      <div class="radio-group">
+        <label><input type="radio" name="iva" value="neto" checked> Precio neto (sin IVA)</label>
+        <label><input type="radio" name="iva" value="desglosado"> +IVA desglosado</label>
+        <label><input type="radio" name="iva" value="ambos"> Mostrar ambas versiones</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Folio y vigencia</legend>
+      <div class="row">
+        <div><label>Folio</label><input type="text" id="folio"></div>
+        <div><label>Fecha</label><input type="text" id="fecha"></div>
+      </div>
+      <label>Vigencia (días)</label>
+      <input type="number" id="vigencia" value="15">
+    </fieldset>
+
+    <fieldset>
+      <legend>Notas y condiciones</legend>
+      <label>Observaciones (opcional)</label>
+      <textarea id="notas" placeholder="Diagnóstico, recomendaciones, accesos, etc."></textarea>
+      <label>Condiciones (se imprimen al pie)</label>
+      <textarea id="condiciones">El precio corresponde al protocolo completo del paquete seleccionado. La garantía está condicionada al cumplimiento íntegro del protocolo y del checklist de responsabilidades pre-servicio. Cotización sujeta a confirmación tras diagnóstico en sitio para servicios comerciales e industriales.</textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>Datos de contacto (fijos)</legend>
+      <label>Teléfono</label><input type="text" id="tel" value="442 274 3329">
+      <label>Correo</label><input type="text" id="correo" value="consafumigaciones@hotmail.com">
+      <label>Instagram</label><input type="text" id="ig" value="@consafumigaciones">
+    </fieldset>
+
+    <button class="btn" onclick="window.print()">📄 Generar PDF</button>
+    <div class="btn-print-hint">En el diálogo de impresión elige<br><b>Destino: Guardar como PDF</b> · Márgenes: Ninguno</div>
+  </div>
+
+  <!-- ================= HOJA ================= -->
+  <div class="lienzo">
+    <div id="hoja"></div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const r = n => Math.round(n);
+  const money = n => '$' + r(n).toLocaleString('es-MX');
+  const IVA = 0.16;
+
+  // folio + fecha por defecto
+  (function init(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    $('folio').value = `CONSA-${yyyy}-${mm}${dd}-A`;
+    const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    $('fecha').value = `${dd} de ${meses[d.getMonth()]} de ${yyyy}`;
+  })();
+
+  function getModo(){return document.querySelector('input[name=modo]:checked').value}
+  function getIva(){return document.querySelector('input[name=iva]:checked').value}
+
+  function calc(){
+    const base = +$('base').value || 0;
+    const fLiq = +$('fLiq').value, f2 = +$('f2ex').value;
+    const dTri = +$('dTri').value/100, dBim = +$('dBim').value/100, dMen = +$('dMen').value/100;
+    const fGS = +$('fGS').value;
+    const vis = +$('visBlindaje').value || 3;
+    const liqVis = r(base*fLiq), liqTot = liqVis*vis;
+    const exVis = r(base*f2),   exTot  = exVis*vis;
+    const triMes = r(base*(1-dTri)), bimMes = r(base*(1-dBim)), menMes = r(base*(1-dMen));
+    return {
+      base, vis,
+      liqVis, liqTot, exVis, exTot,
+      tri:{mes:triMes, gs:r(triMes*fGS), ahorro:base-triMes, label:'Trimestral · 4 servicios/año'},
+      bim:{mes:bimMes, gs:r(bimMes*fGS), ahorro:base-bimMes, label:'Bimestral · 6 servicios/año'},
+      men:{mes:menMes, gs:r(menMes*fGS), ahorro:base-menMes, label:'Mensual · 12 servicios/año'}
+    };
+  }
+
+  // bloque IVA reutilizable para un monto
+  function ivaBlock(neto){
+    const modo = getIva();
+    if(modo==='neto') return '';
+    if(modo==='desglosado'){
+      return `<div class="iva-mini">Subtotal ${money(neto)} · IVA 16% ${money(neto*IVA)} · <b style="color:var(--carmesi)">Total ${money(neto*(1+IVA))}</b></div>`;
+    }
+    return `<div class="iva-mini">Precio neto ${money(neto)} · Con IVA (16%) ${money(neto*(1+IVA))}</div>`;
+  }
+
+  const PAQ = {
+    puntual:{nombre:'Intervención Puntual'},
+    blindaje:{nombre:'Blindaje Total'},
+    continua:{nombre:'Protección Continua'}
+  };
+
+  const INC_MAP = {puntual:'incPuntual', blindaje:'incBlindaje', continua:'incContinua'};
+
+  function defaultFeats(sel){
+    const vis = +$('visBlindaje').value || 3;
+    if(sel==='puntual') return [
+      '1 visita de servicio',
+      'Aspersión perimetral e interior',
+      'Garantía de 15 días (1 retoque focalizado)'];
+    if(sel==='blindaje') return [
+      `${vis} aplicaciones programadas: Día 0 · Día 7–10 · Día 21–28`,
+      'Protocolo MIP: líquido microencapsulado + gel + insuflado',
+      'Rompimiento del ciclo biológico (eclosión de huevos)',
+      'Garantía de 60 días condicionada al protocolo'];
+    return [
+      'Visitas recurrentes programadas',
+      'Certificado técnico por visita',
+      'Contrato de servicio · cobertura permanente',
+      'Estaciones de monitoreo (según inmueble)'];
+  }
+  function getFeats(sel){
+    return $(INC_MAP[sel]).value.split('\n').map(s=>s.trim()).filter(Boolean);
+  }
+
+  function clienteGrid(){
+    const rows=[
+      ['Cliente',$('cliente').value],
+      ['Atención a',$('contacto').value],
+      ['Domicilio / Zona',$('domicilio').value],
+      ['Tipo de inmueble',$('tipo').value],
+      ['Superficie aprox.', $('metraje').value ? $('metraje').value+' m²' : ''],
+      ['Plaga objetivo',$('plaga').value]
+    ];
+    return `<div class="cliente-grid">${rows.map(([l,v])=>
+      `<div><div class="c-lbl">${l}</div><div class="c-val">${v||'&nbsp;'}</div></div>`).join('')}</div>`;
+  }
+
+  function bloqueUnico(c){
+    const sel = $('paqSel').value;
+    const p = PAQ[sel];
+    let priceHTML='';
+
+    if(sel==='puntual'){
+      priceHTML = `
+        <table class="precio-tabla"><tbody>
+          <tr><td>Servicio único · 1 visita</td><td class="monto monto-grande">${money(c.base)}</td></tr>
+        </tbody></table>
+        <div class="pago-nota">Forma de pago: 100% antes del servicio.</div>
+        <div class="total-line"><span class="lbl">Total del servicio</span><span class="val">${money(c.base)}</span></div>
+        ${ivaBlock(c.base)}`;
+    }
+
+    if(sel==='blindaje'){
+      priceHTML = `
+        <table class="precio-tabla">
+          <thead><tr><th>Forma de pago</th><th>Por visita</th><th style="text-align:right">Total (${c.vis} visitas)</th></tr></thead>
+          <tbody>
+            <tr class="destacado"><td>Liquidación total <b style="color:var(--carmesi)">— mejor precio</b><br><span style="font-size:9.5px;color:var(--gris)">100% antes de la visita 1</span></td>
+              <td>${money(c.liqVis)}</td><td class="monto monto-grande">${money(c.liqTot)}</td></tr>
+            <tr><td>2 exhibiciones<br><span style="font-size:9.5px;color:var(--gris)">50% visita 1 + 50% visita 2</span></td>
+              <td>${money(c.exVis)}</td><td class="monto">${money(c.exTot)}</td></tr>
+          </tbody>
+        </table>
+        <div class="pago-nota">Liquidar por adelantado representa un ahorro de ${money(c.exTot-c.liqTot)} sobre el esquema en exhibiciones.</div>
+        <div class="total-line"><span class="lbl">Inversión total · Blindaje Total</span><span class="val">${money(c.liqTot)}</span></div>
+        ${ivaBlock(c.liqTot)}`;
+    }
+
+    if(sel==='continua'){
+      const t = c[$('tier').value];
+      const gs = $('aplicaGS').checked;
+      priceHTML = `
+        <table class="precio-tabla">
+          <thead><tr><th>Esquema</th><th>Por mes</th><th style="text-align:right">Ahorro vs. eventual</th></tr></thead>
+          <tbody>
+            <tr class="destacado"><td>${t.label}</td><td class="monto monto-grande">${money(t.mes)}</td><td class="monto">${money(t.ahorro)}/visita</td></tr>
+            ${gs?`<tr><td>Tarifa de incorporación · 1.er mes (Grand Slam)</td><td class="monto" style="color:var(--carmesi)">${money(t.gs)}</td><td></td></tr>`:''}
+          </tbody>
+        </table>
+        ${gs?`<div class="pago-nota">Tarifa de incorporación aplicable solo al primer servicio del contrato recurrente.</div>`:''}
+        <div class="total-line"><span class="lbl">Mensualidad</span><span class="val">${money(t.mes)}</span></div>
+        ${ivaBlock(t.mes)}`;
+    }
+
+    return `
+      <div class="sec-h">Servicio cotizado</div>
+      <div class="paq-box">
+        <div class="paq-top">
+          <span class="nombre">${p.nombre}</span>
+          ${sel==='blindaje'?'<span class="badge">RECOMENDADO</span>':''}
+        </div>
+        <div class="paq-body">
+          <ul class="incluye">${getFeats(sel).map(f=>`<li>${f}</li>`).join('')}</ul>
+          ${priceHTML}
+        </div>
+      </div>`;
+  }
+
+  function bloqueMenu(c){
+    const t = c[$('tier').value];
+    const card = (cls,rec,name,price,sub,feats)=>`
+      <div class="card ${cls}">
+        <div class="c-head">${rec?'<span class="c-rec-badge">★ Recomendado</span>':''}<div class="c-name">${name}</div></div>
+        <div class="c-price">${price}<small>${sub}</small></div>
+        <ul class="c-feats">${feats.map(f=>`<li>${f}</li>`).join('')}</ul>
+      </div>`;
+    return `
+      <div class="sec-h">Opciones de servicio</div>
+      <div class="menu3">
+        ${card('','', 'Intervención Puntual', money(c.base), '1 visita', getFeats('puntual'))}
+        ${card('rec',true,'Blindaje Total', money(c.liqTot), `${c.vis} visitas · liquidación`, getFeats('blindaje'))}
+        ${card('','', 'Protección Continua', money(t.mes), `desde · ${t.label.split(' · ')[0].toLowerCase()}`, getFeats('continua'))}
+      </div>
+      ${getIva()!=='neto'?`<div class="iva-mini" style="margin-bottom:18px">Precios sin IVA. Agregar 16% para facturación.</div>`:''}`;
+  }
+
+  function render(){
+    // mostrar/ocultar selector de paquete según modo
+    $('selPaqWrap').style.display = getModo()==='unico' ? 'block':'none';
+    // mostrar inclusiones relevantes
+    const modo = getModo(), sel = $('paqSel').value;
+    $('incPuntualWrap').style.display  = (modo==='menu'||sel==='puntual')  ? 'block':'none';
+    $('incBlindajeWrap').style.display = (modo==='menu'||sel==='blindaje') ? 'block':'none';
+    $('incContinuaWrap').style.display = (modo==='menu'||sel==='continua') ? 'block':'none';
+    const c = calc();
+    const vig = $('vigencia').value;
+    const cuerpo = getModo()==='unico' ? bloqueUnico(c) : bloqueMenu(c);
+    const notas = $('notas').value.trim();
+
+    $('hoja').innerHTML = `
+      <div class="doc-head">
+        <div class="wordmark">
+          <div class="mark">CONS<span class="a">A</span></div>
+          <div class="rule"></div>
+          <div class="tag">Control y Seguridad Ambiental</div>
+        </div>
+        <div class="doc-meta">
+          <div><b>Folio:</b> ${$('folio').value}</div>
+          <div><b>Fecha:</b> ${$('fecha').value}</div>
+          <div><b>Vigencia:</b> ${vig} días</div>
+        </div>
+      </div>
+
+      <div class="doc-title">Cotización de servicio</div>
+      <div class="doc-title-sub">Manejo Integrado de Plagas · Diagnóstico previo a la aplicación</div>
+
+      ${clienteGrid()}
+      ${cuerpo}
+
+      ${notas?`<div class="sec-h" style="margin-top:6px">Observaciones</div><div style="font-size:11.5px;line-height:1.6;margin-bottom:16px;white-space:pre-wrap">${notas}</div>`:''}
+
+      <div class="condiciones">${$('condiciones').value}</div>
+
+      <div class="doc-foot">
+        <div><b>CONSA</b> · Control y Seguridad Ambiental</div>
+        <div>Tel. ${$('tel').value} · ${$('correo').value} · ${$('ig').value}</div>
+      </div>`;
+  }
+
+  // prefill inicial de inclusiones
+  ['puntual','blindaje','continua'].forEach(s=>{ $(INC_MAP[s]).value = defaultFeats(s).join('\n'); });
+  // botones restaurar
+  document.querySelectorAll('.restore').forEach(b=>b.addEventListener('click',()=>{
+    const s=b.dataset.paq; $(INC_MAP[s]).value = defaultFeats(s).join('\n'); render();
+  }));
+
+  document.querySelectorAll('input,select,textarea').forEach(el=>{
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+</script>
+</body>
+</html>
