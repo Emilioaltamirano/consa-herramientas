@@ -394,12 +394,12 @@
     if(sel==='blindaje'){
       priceHTML = `
         <table class="precio-tabla">
-          <thead><tr><th>Forma de pago</th><th>Por visita</th><th style="text-align:right">Total (${c.vis} visitas)</th></tr></thead>
+          <thead><tr><th>Forma de pago</th><th style="text-align:right">Total (${c.vis} visitas)</th></tr></thead>
           <tbody>
             <tr class="destacado"><td>Liquidación total <b style="color:var(--carmesi)">— mejor precio</b><br><span style="font-size:9.5px;color:var(--gris)">100% antes de la visita 1</span></td>
-              <td>${money(c.liqVis)}</td><td class="monto monto-grande">${money(c.liqTot)}</td></tr>
+              <td class="monto monto-grande">${money(c.liqTot)}</td></tr>
             <tr><td>2 exhibiciones<br><span style="font-size:9.5px;color:var(--gris)">50% visita 1 + 50% visita 2</span></td>
-              <td>${money(c.exVis)}</td><td class="monto">${money(c.exTot)}</td></tr>
+              <td class="monto">${money(c.exTot)}</td></tr>
           </tbody>
         </table>
         <div class="pago-nota">Liquidar por adelantado representa un ahorro de ${money(c.exTot-c.liqTot)} sobre el esquema en exhibiciones.</div>
