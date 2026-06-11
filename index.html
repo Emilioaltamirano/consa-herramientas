@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herramientas Operativas · CONSA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --carmesi: #8B1A2F;
+      --gris: #787878;
+      --gris-claro: #e5e5e5;
+      --gris-bg: #f7f7f7;
+      --negro: #000000;
+      --blanco: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--negro);
+      background: var(--blanco);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 32px 80px;
+    }
+
+    /* ============ HEADER ============ */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--gris-claro);
+      gap: 24px;
+    }
+
+    .header img {
+      height: 64px;
+      width: auto;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 11px;
+      color: var(--gris);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .header-meta strong {
+      color: var(--negro);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ============ TITLE BLOCK ============ */
+    .title-block {
+      margin-top: 56px;
+      margin-bottom: 56px;
+    }
+
+    .title-block h1 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+    }
+
+    .title-block p {
+      color: var(--gris);
+      font-size: 15px;
+      margin-top: 10px;
+      max-width: 560px;
+    }
+
+    /* ============ CATEGORY SECTION ============ */
+    .category {
+      margin-bottom: 56px;
+    }
+
+    .category-label {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--carmesi);
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .category-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gris-claro);
+    }
+
+    /* ============ CARDS GRID ============ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 24px;
+      border: 1px solid var(--gris-claro);
+      background: var(--blanco);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 168px;
+    }
+
+    .card:hover {
+      border-color: var(--negro);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--gris);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-arrow {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--carmesi);
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .card-arrow::after {
+      content: '  →';
+    }
+
+    /* ============ CARD: PRÓXIMAMENTE ============ */
+    .card.soon {
+      background: var(--gris-bg);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .card.soon .card-title {
+      color: var(--gris);
+    }
+
+    .card.soon .card-arrow {
+      color: var(--gris);
+    }
+
+    .card.soon .card-arrow::after {
+      content: '';
+    }
+
+    /* ============ FOOTER ============ */
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--gris-claro);
+      font-size: 11px;
+      color: var(--gris);
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer span:last-child {
+      color: var(--gris);
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 640px) {
+      .layout {
+        padding: 32px 20px 60px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .header-meta {
+        text-align: left;
+      }
+
+      .header img {
+        height: 52px;
+      }
+
+      .title-block {
+        margin-top: 40px;
+        margin-bottom: 40px;
+      }
+
+      .title-block h1 {
+        font-size: 28px;
+      }
+
+      .title-block p {
+        font-size: 14px;
+      }
+
+      .category {
+        margin-bottom: 40px;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+      <img src="logo.png" alt="CONSA — Control y Seguridad Ambiental">
+      <div class="header-meta">
+        <strong>Centro Operativo</strong>
+        <span>Uso interno</span>
+      </div>
+    </header>
+
+    <!-- ============ TITLE ============ -->
+    <section class="title-block">
+      <h1>Herramientas Operativas</h1>
+      <p>Acceso directo a los instrumentos de trabajo diario: cotización, programación y documentación de servicios.</p>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- CATEGORÍA: COTIZACIÓN                          -->
+    <!-- ============================================== -->
+    <section class="category">
+      <div class="category-label">Cotización</div>
+      <div class="cards-grid">
+
+        <!-- HERRAMIENTA: Generador de Cotizaciones -->
+        <a class="card" href="generador-cotizaciones.html">
+          <div class="card-title">Generador de Cotizaciones</div>
+          <div class="card-desc">Convierte los parámetros del cotizador en una cotización formal en PDF, lista para enviar al cliente.</div>
+          <div class="card-arrow">Abrir</div>
+        </a>
+
+        <!-- HERRAMIENTA: Cotizador (próximamente) -->
+        <div class="card soon">
+          <div class="card-title">Cotizador</div>
+          <div class="card-desc">Calculadora de precios en línea para cotizar desde el celular durante una visita en campo. Sustituirá al Excel.</div>
+          <div class="card-arrow">Próximamente</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- CATEGORÍA: PROGRAMACIÓN                        -->
+    <!-- ============================================== -->
+    <section class="category">
+      <div class="category-label">Programación</div>
+      <div class="cards-grid">
+
+        <!-- HERRAMIENTA: Generador de Calendarios -->
+        <a class="card" href="generador-calendarios.html">
+          <div class="card-title">Generador de Calendarios</div>
+          <div class="card-desc">Construye el calendario anual de servicios recurrentes con cálculo automático de fechas y validación de intervalos técnicos.</div>
+          <div class="card-arrow">Abrir</div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PARA AGREGAR UNA HERRAMIENTA NUEVA:            -->
+    <!--                                                -->
+    <!-- 1. Decide en qué categoría va (Cotización,     -->
+    <!--    Programación) o crea una nueva categoría    -->
+    <!--    copiando un bloque <section class="category"> -->
+    <!--                                                -->
+    <!-- 2. Copia este bloque dentro de la categoría    -->
+    <!--    correspondiente:                            -->
+    <!--                                                -->
+    <!-- <a class="card" href="ARCHIVO.html">           -->
+    <!--   <div class="card-title">NOMBRE</div>         -->
+    <!--   <div class="card-desc">DESCRIPCIÓN</div>     -->
+    <!--   <div class="card-arrow">Abrir</div>          -->
+    <!-- </a>                                           -->
+    <!--                                                -->
+    <!-- 3. Cambia ARCHIVO.html por el nombre real del  -->
+    <!--    archivo HTML que subiste a GitHub.          -->
+    <!-- 4. Cambia NOMBRE y DESCRIPCIÓN.                -->
+    <!--                                                -->
+    <!-- Para una herramienta en construcción, usa:     -->
+    <!--                                                -->
+    <!-- <div class="card soon">                        -->
+    <!--   <div class="card-title">NOMBRE</div>         -->
+    <!--   <div class="card-desc">DESCRIPCIÓN</div>     -->
+    <!--   <div class="card-arrow">Próximamente</div>   -->
+    <!-- </div>                                         -->
+    <!-- ============================================== -->
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+      <span>CONSA · Control y Seguridad Ambiental</span>
+      <span>Zona Metropolitana de Querétaro</span>
+    </footer>
+
+  </div>
+
+</body>
+</html>
