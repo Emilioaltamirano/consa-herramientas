@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario de Servicios — CONSA</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── VARIABLES ─── */
+  :root {
+    --crimson: #8B1A2F;
+    --gray:    #787878;
+    --black:   #111111;
+    --white:   #FFFFFF;
+    --light:   #F5F5F5;
+    --border:  #D8D8D8;
+    --font:    'Montserrat', sans-serif;
+  }
+
+  /* ─── SCREEN: EDITOR PANEL ─── */
+  body {
+    font-family: var(--font);
+    background: #ECECEC;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 60px;
+  }
+
+  h1.app-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 24px;
+  }
+  h1.app-title span { color: var(--crimson); }
+
+  .editor {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.10);
+    padding: 28px 32px;
+    width: 100%;
+    max-width: 860px;
+    margin-bottom: 36px;
+  }
+
+  .editor h2 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+    margin-bottom: 24px;
+  }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  input[type="text"], input[type="number"], select, textarea {
+    font-family: var(--font);
+    font-size: 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 10px;
+    color: var(--black);
+    outline: none;
+    transition: border-color .18s;
+    background: var(--white);
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--crimson); }
+  textarea { resize: vertical; min-height: 52px; }
+
+  /* ─── MONTH BLOCKS ─── */
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .month-block {
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .month-header {
+    background: var(--black);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .month-header .m-num { color: var(--crimson); font-size: 11px; }
+
+  .month-body { padding: 10px; background: var(--white); }
+
+  .visit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+  }
+  .visit-row input[type="text"] {
+    flex: 1;
+    font-size: 11px;
+    padding: 5px 7px;
+  }
+  .visit-row input.note-field {
+    flex: 1.4;
+    font-size: 11px;
+    color: var(--gray);
+  }
+  .btn-icon {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    width: 26px; height: 26px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s, background .15s;
+    flex-shrink: 0;
+  }
+  .btn-icon:hover { border-color: var(--crimson); background: #fdf3f5; }
+  .btn-icon.add { color: var(--crimson); }
+  .btn-icon.del { color: #aaa; }
+
+  .add-visit-btn {
+    font-family: var(--font);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    background: none;
+    border: 1.5px dashed #D4A0A8;
+    border-radius: 4px;
+    width: 100%;
+    padding: 6px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .add-visit-btn:hover { background: #fdf3f5; }
+
+  /* ─── ACTION BUTTONS ─── */
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--crimson); color: var(--white); }
+  .btn-secondary { background: var(--black); color: var(--white); }
+  .btn-outline { background: none; border: 1.5px solid var(--border); color: var(--gray); }
+
+  /* ─── PRINT PREVIEW ─── */
+  #preview-wrap {
+    width: 100%;
+    max-width: 860px;
+  }
+  #preview-wrap h2.section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 14px;
+  }
+
+  /* ─── A4 DOCUMENT ─── */
+  .a4 {
+    background: var(--white);
+    width: 794px;
+    min-height: 1123px;
+    margin: 0 auto;
+    padding: 52px 56px 48px;
+    box-shadow: 0 6px 32px rgba(0,0,0,.13);
+    position: relative;
+    font-family: var(--font);
+  }
+
+  /* HEADER */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 36px;
+  }
+
+  .logo-block { line-height: 1; }
+  .logo-wordmark {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--gray);
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+  .logo-wordmark .a-letter { color: var(--crimson); }
+  .logo-rule {
+    height: 1.5px;
+    background: var(--gray);
+    margin: 4px 0 5px;
+  }
+  .logo-tagline {
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-family: var(--font);
+  }
+
+  .doc-meta {
+    text-align: right;
+    font-size: 9px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+  .doc-meta strong {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 3px;
+  }
+
+  /* TITLE BAND */
+  .title-band {
+    background: var(--black);
+    color: var(--white);
+    padding: 13px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    border-left: 5px solid var(--crimson);
+  }
+  .title-band .doc-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .title-band .doc-year {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--crimson);
+  }
+
+  /* CLIENT BOX */
+  .client-box {
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px 20px;
+    background: var(--light);
+  }
+  .client-field { display: flex; flex-direction: column; gap: 2px; }
+  .client-field span.cf-label {
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .client-field span.cf-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* CALENDAR GRID */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  .cal-month {
+    border: 1px solid var(--border);
+  }
+
+  .cal-month-header {
+    background: var(--black);
+    color: var(--white);
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cal-month-header .m-name {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .cal-month-header .m-num-badge {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--crimson);
+    background: rgba(139,26,47,.18);
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: .08em;
+  }
+
+  .cal-month-body { padding: 10px; min-height: 64px; }
+
+  .visit-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 7px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+  .visit-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .visit-date-badge {
+    background: var(--crimson);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 6px 7px 5px;
+    min-width: 34px;
+    text-align: center;
+    flex-shrink: 0;
+    border-radius: 2px;
+  }
+  .visit-date-badge .day-num { display: block; }
+  .visit-date-badge .day-abbr { font-size: 7px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .75; }
+
+  .visit-info { flex: 1; }
+  .visit-service-name {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .visit-note {
+    font-size: 8.5px;
+    color: var(--gray);
+    margin-top: 2px;
+    line-height: 1.3;
+    font-style: italic;
+  }
+
+  .no-service {
+    font-size: 9px;
+    color: #BBBBB;
+    color: #C8C8C8;
+    text-align: center;
+    padding: 10px 0;
+    letter-spacing: .06em;
+    font-style: italic;
+  }
+
+  /* LEGEND */
+  .legend {
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 8.5px;
+    color: var(--gray);
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* FOOTER */
+  .doc-footer {
+    border-top: 1.5px solid var(--border);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .footer-note {
+    font-size: 7.5px;
+    color: var(--gray);
+    line-height: 1.6;
+    max-width: 380px;
+  }
+  .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray);
+    font-family: Georgia, serif;
+    letter-spacing: .04em;
+    text-align: right;
+  }
+  .footer-logo .a-letter { color: var(--crimson); }
+  .footer-contact {
+    font-size: 7.5px;
+    color: var(--gray);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    body { background: none; padding: 0; margin: 0; }
+    .editor, .app-title, #preview-wrap > h2.section-label,
+    .actions, #controls-section { display: none !important; }
+    .a4 {
+      box-shadow: none;
+      width: 100%;
+      padding: 14mm 16mm 12mm;
+      margin: 0;
+      min-height: auto;
+    }
+    @page { size: A4; margin: 0; }
+  }
+
+  /* UTIL */
+  .hidden { display: none !important; }
+  .mt-4 { margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION: EDITOR
+════════════════════════════════════════════════ -->
+<h1 class="app-title">CONS<span>A</span> — Generador de Calendario de Servicios</h1>
+
+<div class="editor" id="controls-section">
+
+  <!-- DATOS DEL CLIENTE -->
+  <h2>Datos del Cliente</h2>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Nombre / Razón Social</label>
+      <input type="text" id="clientName" placeholder="Ej. Restaurante El Mesón" value="">
+    </div>
+    <div class="form-group">
+      <label>Contacto</label>
+      <input type="text" id="clientContact" placeholder="Ej. Lic. García" value="">
+    </div>
+    <div class="form-group">
+      <label>Dirección / Sucursal</label>
+      <input type="text" id="clientAddress" placeholder="Ej. Av. Constituyentes 120, Querétaro" value="">
+    </div>
+    <div class="form-group">
+      <label>Teléfono</label>
+      <input type="text" id="clientPhone" placeholder="Ej. 442 123 4567" value="">
+    </div>
+  </div>
+
+  <!-- DATOS DEL SERVICIO -->
+  <h2>Datos del Servicio</h2>
+  <div class="form-grid three">
+    <div class="form-group">
+      <label>Paquete / Tipo de Servicio</label>
+      <select id="serviceType">
+        <option value="Protección Continua">Protección Continua</option>
+        <option value="Blindaje Total">Blindaje Total</option>
+        <option value="Intervención Puntual">Intervención Puntual</option>
+        <option value="Contrato Anual MIP">Contrato Anual MIP</option>
+        <option value="Personalizado">Personalizado…</option>
+      </select>
+    </div>
+    <div class="form-group" style="grid-column:1/-1;">
+      <label>Plaga(s) a Tratar</label>
+      <div id="pestCheckboxes" style="display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:4px;">
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Cucarachas"> Cucarachas</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Roedores"> Roedores</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Mosca / Moscas"> Mosca / Moscas</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Chinches"> Chinches</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Hormigas"> Hormigas</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Alacranes / Escorpiones"> Alacranes / Escorpiones</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Termitas"> Termitas</label>
+        <label style="font-size:12px;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--black);display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="Control General MIP"> Control General MIP</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Año del Calendario</label>
+      <input type="number" id="calYear" value="2025" min="2024" max="2030">
+    </div>
+    <div class="form-group full">
+      <label>Notas generales del contrato (opcional)</label>
+      <textarea id="generalNotes" placeholder="Ej. Incluye monitoreo de estaciones cebaderas. Servicio en horario nocturno."></textarea>
+    </div>
+  </div>
+
+  <!-- VISITAS POR MES -->
+  <h2>Calendarización de Visitas</h2>
+  <p style="font-size:11px;color:var(--gray);margin-bottom:14px;">Para cada mes, agrega las visitas programadas. Usa el campo de fecha (día del mes) y una nota corta opcional por visita.</p>
+
+  <div class="months-grid" id="monthsEditor"></div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="resetAll()">Limpiar todo</button>
+    <button class="btn btn-secondary" onclick="generatePreview()">Vista previa</button>
+    <button class="btn btn-primary" onclick="printCalendar()">Imprimir / Guardar PDF</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION: PREVIEW
+════════════════════════════════════════════════ -->
+<div id="preview-wrap" class="hidden">
+  <h2 class="section-label">Vista previa del documento</h2>
+  <div class="a4" id="a4doc"></div>
+  <div class="actions" style="margin-top:18px;">
+    <button class="btn btn-outline" onclick="backToEditor()">← Editar</button>
+    <button class="btn btn-primary" onclick="printCalendar()">Imprimir / Guardar PDF</button>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const MONTHS = [
+  "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+  "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+];
+const MONTH_ABBR = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+const DAY_ABBR = ["DOM","LUN","MAR","MIÉ","JUE","VIE","SÁB"];
+
+// visits[month_index] = [{day:'15', note:'Aplicación especial'}]
+let visits = Array.from({length:12}, () => []);
+
+/* ── BUILD EDITOR ── */
+function buildEditor() {
+  const container = document.getElementById('monthsEditor');
+  container.innerHTML = '';
+  MONTHS.forEach((name, mi) => {
+    const block = document.createElement('div');
+    block.className = 'month-block';
+    block.innerHTML = `
+      <div class="month-header">
+        <span>${name}</span>
+        <span class="m-num">${String(mi+1).padStart(2,'0')}</span>
+      </div>
+      <div class="month-body" id="mb-${mi}"></div>
+    `;
+    container.appendChild(block);
+    renderMonthRows(mi);
+  });
+}
+
+function renderMonthRows(mi) {
+  const body = document.getElementById(`mb-${mi}`);
+  body.innerHTML = '';
+  visits[mi].forEach((v, vi) => {
+    const row = document.createElement('div');
+    row.className = 'visit-row';
+    row.innerHTML = `
+      <input type="text" class="day-input" placeholder="Día" value="${v.day}" maxlength="2" style="width:46px;flex:none;"
+        onchange="visits[${mi}][${vi}].day=this.value.trim()">
+      <input type="text" class="note-field" placeholder="Nota (opcional)" value="${v.note}"
+        onchange="visits[${mi}][${vi}].note=this.value.trim()">
+      <button class="btn-icon del" onclick="removeVisit(${mi},${vi})" title="Eliminar visita">✕</button>
+    `;
+    body.appendChild(row);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-visit-btn';
+  addBtn.textContent = '+ Agregar visita';
+  addBtn.onclick = () => addVisit(mi);
+  body.appendChild(addBtn);
+}
+
+function addVisit(mi) {
+  visits[mi].push({day:'', note:''});
+  renderMonthRows(mi);
+}
+function removeVisit(mi, vi) {
+  visits[mi].splice(vi,1);
+  renderMonthRows(mi);
+}
+
+/* ── COLLECT INPUTS ── */
+function collect() {
+  // sync any pending inputs
+  document.querySelectorAll('.day-input').forEach(inp => {
+    const [mi,vi] = inp.getAttribute('data-idx') ? inp.getAttribute('data-idx').split('-').map(Number) : [-1,-1];
+  });
+  return {
+    name:    document.getElementById('clientName').value.trim() || 'Cliente',
+    contact: document.getElementById('clientContact').value.trim(),
+    address: document.getElementById('clientAddress').value.trim(),
+    phone:   document.getElementById('clientPhone').value.trim(),
+    service: document.getElementById('serviceType').value,
+    pest:    Array.from(document.querySelectorAll('#pestCheckboxes input:checked')).map(cb=>cb.value).join(' · ') || 'Control General',
+    year:    document.getElementById('calYear').value,
+    notes:   document.getElementById('generalNotes').value.trim(),
+  };
+}
+
+/* ── DAY OF WEEK ── */
+function getDayAbbr(day, month, year) {
+  const d = new Date(year, month, parseInt(day));
+  if(isNaN(d)) return '';
+  return DAY_ABBR[d.getDay()];
+}
+
+/* ── COUNT VISITS ── */
+function totalVisits() {
+  return visits.reduce((sum, mv) => sum + mv.filter(v=>v.day!=='').length, 0);
+}
+
+/* ── GENERATE PREVIEW ── */
+function generatePreview() {
+  // sync open inputs first
+  document.querySelectorAll('#monthsEditor .day-input').forEach(inp => {
+    const mb = inp.closest('.month-body');
+    const mi = parseInt(mb.id.replace('mb-',''));
+    const rows = mb.querySelectorAll('.visit-row');
+    rows.forEach((row, vi) => {
+      if(visits[mi][vi]) {
+        visits[mi][vi].day = row.querySelector('.day-input').value.trim();
+        visits[mi][vi].note = row.querySelector('.note-field').value.trim();
+      }
+    });
+  });
+
+  const d = collect();
+  const a4 = document.getElementById('a4doc');
+  a4.innerHTML = buildA4(d);
+
+  document.getElementById('controls-section').classList.add('hidden');
+  document.getElementById('preview-wrap').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function backToEditor() {
+  document.getElementById('controls-section').classList.remove('hidden');
+  document.getElementById('preview-wrap').classList.add('hidden');
+}
+
+/* ── BUILD A4 HTML ── */
+function buildA4(d) {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
+
+  // months grid
+  let calGrid = '';
+  MONTHS.forEach((mname, mi) => {
+    const mvs = visits[mi].filter(v => v.day !== '');
+    let visitsHTML = '';
+    if(mvs.length === 0) {
+      visitsHTML = `<div class="no-service">Sin servicio programado</div>`;
+    } else {
+      mvs.sort((a,b) => parseInt(a.day)-parseInt(b.day));
+      mvs.forEach(v => {
+        const dayAbbr = getDayAbbr(v.day, mi, parseInt(d.year));
+        visitsHTML += `
+          <div class="visit-entry">
+            <div class="visit-date-badge">
+              <span class="day-num">${v.day}</span>
+              <span class="day-abbr">${dayAbbr}</span>
+            </div>
+            <div class="visit-info">
+              <div class="visit-service-name">${d.service}</div>
+              ${v.note ? `<div class="visit-note">${v.note}</div>` : ''}
+            </div>
+          </div>`;
+      });
+    }
+
+    calGrid += `
+      <div class="cal-month">
+        <div class="cal-month-header">
+          <span class="m-name">${mname}</span>
+          <span class="m-num-badge">${MONTH_ABBR[mi]}</span>
+        </div>
+        <div class="cal-month-body">${visitsHTML}</div>
+      </div>`;
+  });
+
+  const notesHTML = d.notes ? `
+    <div style="margin-bottom:18px;padding:10px 14px;border-left:3px solid var(--crimson);background:var(--light);">
+      <div style="font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:4px;">Notas del contrato</div>
+      <div style="font-size:9.5px;color:var(--black);line-height:1.6;">${d.notes}</div>
+    </div>` : '';
+
+  return `
+    <!-- HEADER -->
+    <div class="doc-header">
+      <div class="logo-block">
+        <div class="logo-wordmark">CONS<span class="a-letter">A</span></div>
+        <div class="logo-rule"></div>
+        <div class="logo-tagline">Control y Seguridad Ambiental</div>
+      </div>
+      <div class="doc-meta">
+        <strong>Documento oficial</strong>
+        Folio: CAL-${d.year}-${String(Math.floor(Math.random()*9000)+1000)}<br>
+        
+        ZMQ — Querétaro, México
+      </div>
+    </div>
+
+    <!-- TITLE BAND -->
+    <div class="title-band">
+      <div class="doc-title">Calendario de Servicios Programados</div>
+      <div class="doc-year"><strong>${d.year}</strong></div>
+    </div>
+
+    <!-- CLIENT BOX -->
+    <div class="client-box">
+      <div class="client-field">
+        <span class="cf-label">Cliente</span>
+        <span class="cf-value">${d.name}</span>
+      </div>
+      <div class="client-field">
+        <span class="cf-label">Contacto</span>
+        <span class="cf-value">${d.contact || '—'}</span>
+      </div>
+      <div class="client-field">
+        <span class="cf-label">Teléfono</span>
+        <span class="cf-value">${d.phone || '—'}</span>
+      </div>
+      <div class="client-field" style="grid-column:1/3;">
+        <span class="cf-label">Dirección / Sucursal</span>
+        <span class="cf-value">${d.address || '—'}</span>
+      </div>
+      <div class="client-field">
+        <span class="cf-label">Plaga / Control</span>
+        <span class="cf-value">${d.pest}</span>
+      </div>
+    </div>
+
+    ${notesHTML}
+
+    <!-- CALENDAR -->
+    <div class="cal-grid">${calGrid}</div>
+
+    <!-- FOOTER -->
+    <div class="doc-footer">
+      <div class="footer-note">
+        Las fechas de servicio están sujetas a ajustes previo aviso. Ante cualquier cambio,
+        nuestro equipo se comunicará con 48 hrs de anticipación.<br>
+        Este calendario forma parte del contrato de <strong>${d.service}</strong> vigente para el período ${d.year}.
+      </div>
+      <div>
+        <div class="footer-logo">CONS<span class="a-letter">A</span></div>
+        <div class="footer-contact">consafumigaciones@hotmail.com &nbsp;|&nbsp; 442 274 3329</div>
+      </div>
+    </div>`;
+}
+
+/* ── PRINT ── */
+function printCalendar() {
+  if(document.getElementById('preview-wrap').classList.contains('hidden')) {
+    generatePreview();
+    setTimeout(() => window.print(), 400);
+  } else {
+    window.print();
+  }
+}
+
+/* ── RESET ── */
+function resetAll() {
+  if(!confirm('¿Limpiar todos los datos y visitas?')) return;
+  visits = Array.from({length:12}, () => []);
+  ['clientName','clientContact','clientAddress','clientPhone','generalNotes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('calYear').value = new Date().getFullYear();
+  buildEditor();
+}
+
+/* ── INIT ── */
+buildEditor();
+</script>
+</body>
+</html>
