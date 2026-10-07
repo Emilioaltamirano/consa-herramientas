@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificado de Servicio — CONSA</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── VARIABLES ── */
+:root {
+  --crimson: #8B1A2F;
+  --gray:    #787878;
+  --black:   #111111;
+  --white:   #FFFFFF;
+  --light:   #F5F5F5;
+  --border:  #D0D0D0;
+  --font:    'Montserrat', sans-serif;
+}
+
+/* ══════════════════════════════════
+   SCREEN LAYOUT
+══════════════════════════════════ */
+body {
+  font-family: var(--font);
+  background: #E8E8E8;
+  min-height: 100vh;
+  padding: 28px 16px 64px;
+}
+
+.app-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gray);
+  text-align: center;
+  margin-bottom: 24px;
+}
+.app-title span { color: var(--crimson); }
+
+/* ── SCREEN WRAPPER ── */
+.screen-wrap {
+  display: flex;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* ── EDITOR PANEL ── */
+.editor-panel {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.e-card {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+.e-card-head {
+  background: var(--black);
+  color: var(--white);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-left: 4px solid var(--crimson);
+}
+
+.e-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.e-field { display: flex; flex-direction: column; gap: 4px; }
+.e-field label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.e-field input[type="text"],
+.e-field input[type="date"],
+.e-field textarea,
+.e-field select {
+  font-family: var(--font);
+  font-size: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 9px;
+  color: var(--black);
+  outline: none;
+  transition: border-color .15s;
+  background: var(--white);
+  width: 100%;
+}
+.e-field input:focus,
+.e-field textarea:focus,
+.e-field select:focus { border-color: var(--crimson); }
+.e-field textarea { resize: vertical; min-height: 56px; }
+
+/* checkbox groups */
+.check-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 10px;
+}
+.check-group.one-col { grid-template-columns: 1fr; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--black);
+  cursor: pointer;
+  line-height: 1.3;
+}
+.check-item input[type="checkbox"] {
+  accent-color: var(--crimson);
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* radio groups */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--black);
+  cursor: pointer;
+}
+.radio-item input[type="radio"] {
+  accent-color: var(--crimson);
+  cursor: pointer;
+}
+
+/* ingredient rows */
+.ing-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+.ing-row input {
+  font-family: var(--font);
+  font-size: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  padding: 5px 6px;
+  color: var(--black);
+  outline: none;
+  width: 100%;
+}
+.ing-row input:focus { border-color: var(--crimson); }
+.ing-row-labels {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+.ing-row-labels span {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+/* action buttons */
+.action-bar {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.btn {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-primary { background: var(--crimson); color: var(--white); }
+.btn-secondary { background: var(--black); color: var(--white); }
+.btn-outline {
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--gray);
+}
+
+/* ── PREVIEW PANEL ── */
+.preview-panel {
+  flex: 1;
+  min-width: 0;
+}
+.preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 12px;
+}
+
+/* ══════════════════════════════════
+   CERTIFICATE DOCUMENT (A4)
+══════════════════════════════════ */
+.cert {
+  background: var(--white);
+  width: 794px;
+  min-height: 1123px;
+  padding: 28px 32px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.14);
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--black);
+  position: relative;
+}
+
+/* CERT HEADER */
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.cert-logo-wordmark {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--gray);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+}
+.cert-logo-wordmark .a-red { color: var(--crimson); }
+.cert-logo-rule { height: 1px; background: var(--gray); margin: 3px 0 4px; }
+.cert-logo-tag {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.cert-title-block { text-align: right; }
+.cert-title-block h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: .02em;
+}
+.cert-title-block .cert-lic {
+  font-size: 8px;
+  color: var(--gray);
+  margin-top: 3px;
+  letter-spacing: .06em;
+}
+
+/* FOLIO ROW */
+.folio-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0;
+  margin-bottom: 10px;
+}
+.folio-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--crimson);
+}
+.folio-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: .06em;
+}
+
+/* GENERIC TABLE ROWS */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.info-table td {
+  border: 1px solid var(--border);
+  padding: 5px 8px;
+  font-size: 10.5px;
+  vertical-align: middle;
+}
+.info-table td.lbl {
+  background: var(--crimson);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  width: 120px;
+}
+.info-table td.val { color: var(--black); min-height: 22px; }
+.info-table td.val.empty { color: #ccc; font-style: italic; }
+
+/* tipo servicio row */
+.tipo-row td { padding: 5px 8px; }
+.tipo-checks {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.tipo-check-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+}
+.cert-checkbox {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--gray);
+  flex-shrink: 0;
+  position: relative;
+  border-radius: 1px;
+}
+.cert-checkbox.checked {
+  background: var(--crimson);
+  border-color: var(--crimson);
+}
+.cert-checkbox.checked::after {
+  content: '';
+  position: absolute;
+  left: 2px; top: 0px;
+  width: 5px; height: 8px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* THREE-COLUMN SECTION */
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.three-col > div { border-right: 1px solid var(--border); }
+.three-col > div:last-child { border-right: none; }
+
+.col-head {
+  background: var(--crimson);
+  color: var(--white);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 5px 8px;
+}
+.col-body { padding: 7px 8px; }
+.col-check-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.col-check-item:last-child { margin-bottom: 0; }
+
+/* observaciones textarea col */
+.obs-col .col-body {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 28px);
+}
+.obs-lines {
+  flex: 1;
+  font-size: 9.5px;
+  color: var(--black);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* INGREDIENTS TABLE */
+.ing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.ing-table th {
+  background: var(--crimson);
+  color: var(--white);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 5px 8px;
+  text-align: left;
+  border: 1px solid var(--crimson);
+}
+.ing-table td {
+  border: 1px solid var(--border);
+  padding: 5px 8px;
+  font-size: 10px;
+  min-height: 20px;
+  color: var(--black);
+}
+.ing-table tr:nth-child(even) td { background: #FAFAFA; }
+
+/* BOTTOM THREE-COL */
+.bottom-three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+.bottom-three > div {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+.bottom-three > div:last-child { border-right: none; }
+.bottom-three .col-body { flex: 1; }
+
+/* PROXIMA VISITA */
+.proxima-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.proxima-row > div { border-right: 1px solid var(--border); }
+.proxima-row > div:last-child { border-right: none; }
+.proxima-body { padding: 7px 10px; }
+.proxima-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 5px;
+}
+.proxima-tipos {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* NOTA */
+.nota-box {
+  background: #FAFAFA;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--crimson);
+  padding: 7px 10px;
+  margin-bottom: 10px;
+}
+.nota-box p {
+  font-size: 8.5px;
+  color: var(--black);
+  line-height: 1.6;
+}
+.nota-box p strong { font-weight: 700; }
+.nota-box p em { font-style: italic; color: var(--gray); }
+
+/* SIGNATURES */
+.sig-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 16px;
+}
+.sig-box {
+  border-top: 1px solid var(--black);
+  padding-top: 5px;
+  text-align: center;
+}
+.sig-label { font-size: 8.5px; color: var(--gray); letter-spacing: .06em; }
+.sig-spacer { height: 36px; }
+
+/* CERT FOOTER */
+.cert-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.cert-footer-left .co-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--black);
+}
+.cert-footer-left .co-sub {
+  font-size: 8px;
+  color: var(--gray);
+  margin-top: 1px;
+}
+.cert-footer-center {
+  font-size: 8px;
+  color: var(--gray);
+  text-align: center;
+  line-height: 1.6;
+}
+.cert-footer-right {
+  text-align: right;
+  font-size: 8px;
+  color: var(--gray);
+  line-height: 1.7;
+}
+.cert-footer-right strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+/* ══════════════════════════════════
+   PRINT
+══════════════════════════════════ */
+@media print {
+  body { background: none; padding: 0; margin: 0; }
+  .editor-panel,
+  .app-title,
+  .preview-label,
+  .action-bar { display: none !important; }
+  .screen-wrap { display: block; max-width: none; }
+  .preview-panel { display: block; }
+  .cert {
+    box-shadow: none;
+    width: 100%;
+    padding: 12mm 14mm 10mm;
+    min-height: auto;
+  }
+  @page { size: A4; margin: 0; }
+}
+
+/* UTIL */
+.hidden { display: none !important; }
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<p class="app-title">CONS<span>A</span> — Certificado de Servicio</p>
+
+<div class="screen-wrap">
+
+  <!-- ══════════════════════════
+       EDITOR PANEL
+  ══════════════════════════ -->
+  <div class="editor-panel" id="editorPanel">
+
+    <!-- FOLIO Y DATOS GENERALES -->
+    <div class="e-card">
+      <div class="e-card-head">Datos Generales</div>
+      <div class="e-card-body">
+        <div class="e-field">
+          <label>Folio</label>
+          <input type="text" id="folio" placeholder="Ej. 2025-001">
+        </div>
+        <div class="e-field">
+          <label>Cliente</label>
+          <input type="text" id="cliente" placeholder="Nombre o razón social">
+        </div>
+        <div class="e-field">
+          <label>Fecha de Servicio</label>
+          <input type="date" id="fechaServicio">
+        </div>
+        <div class="e-field">
+          <label>Dirección</label>
+          <input type="text" id="direccion" placeholder="Calle, número, colonia">
+        </div>
+        <div class="e-field">
+          <label>Responsable</label>
+          <input type="text" id="responsable" placeholder="Nombre del responsable">
+        </div>
+        <div class="e-field">
+          <label>Forma de Pago</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="pago" value="Efectivo"> Efectivo</label>
+            <label class="radio-item"><input type="radio" name="pago" value="Transferencia"> Transferencia</label>
+            <label class="radio-item"><input type="radio" name="pago" value="Terminal"> Terminal</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPO DE SERVICIO -->
+    <div class="e-card">
+      <div class="e-card-head">Tipo de Servicio</div>
+      <div class="e-card-body">
+        <div class="check-group one-col">
+          <label class="check-item"><input type="checkbox" name="tipo" value="Preventivo / Mantenimiento"> Preventivo / Mantenimiento</label>
+          <label class="check-item"><input type="checkbox" name="tipo" value="Correctivo / Erradicación"> Correctivo / Erradicación</label>
+          <label class="check-item"><input type="checkbox" name="tipo" value="Visita de Garantía"> Visita de Garantía</label>
+          <label class="check-item"><input type="checkbox" name="tipo" value="Servicio Especial"> Servicio Especial</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÁREA TRATADA -->
+    <div class="e-card">
+      <div class="e-card-head">Área Tratada</div>
+      <div class="e-card-body">
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="area" value="Perímetros exteriores"> Perímetros exteriores</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Recepción / Clientes"> Recepción / Clientes</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Mostrador / Barra"> Mostrador / Barra</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Sanitarios"> Sanitarios</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Área de almacén"> Área de almacén</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Muros y Zoclos"> Muros y Zoclos</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Cocina / Línea caliente"> Cocina / Línea caliente</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Refrigeradores / Tarjas"> Refrigeradores / Tarjas</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Coladeras / Tuberías"> Coladeras / Tuberías</label>
+          <label class="check-item"><input type="checkbox" name="area" value="Plafones"> Plafones</label>
+        </div>
+        <div class="e-field" style="margin-top:6px;">
+          <label>Otros</label>
+          <input type="text" id="areaOtros" placeholder="Especificar…">
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAGA CONTROLADA -->
+    <div class="e-card">
+      <div class="e-card-head">Plaga Controlada</div>
+      <div class="e-card-body">
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="plaga" value="Cucaracha Alemana"> Cucaracha Alemana</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Cucaracha Americana"> Cucaracha Americana</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Araña"> Araña</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Alacrán"> Alacrán</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Hormiga"> Hormiga</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Grillo / Chapulín"> Grillo / Chapulín</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Mosca"> Mosca</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Mosquito"> Mosquito</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Ratón / Rata"> Ratón / Rata</label>
+          <label class="check-item"><input type="checkbox" name="plaga" value="Pulga / Chinche"> Pulga / Chinche</label>
+        </div>
+        <div class="e-field" style="margin-top:6px;">
+          <label>Otros</label>
+          <input type="text" id="plagaOtros" placeholder="Especificar…">
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES POR ÁREA -->
+    <div class="e-card">
+      <div class="e-card-head">Observaciones por Área</div>
+      <div class="e-card-body">
+        <div class="e-field">
+          <textarea id="observaciones" placeholder="Descripción de hallazgos por área…" style="min-height:80px;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- INGREDIENTES ACTIVOS -->
+    <div class="e-card">
+      <div class="e-card-head">Ingredientes Activos</div>
+      <div class="e-card-body">
+        <div class="ing-row-labels" style="grid-template-columns:2fr 1fr 1fr;">
+          <span>Ingrediente Activo</span>
+          <span>Reg. COFEPRIS</span>
+          <span>Dosis</span>
+        </div>
+        <div id="ingRows">
+          <div class="ing-row" style="grid-template-columns:2fr 1fr 1fr;">
+            <input type="text" placeholder="Ej. Cipermetrina">
+            <input type="text" placeholder="Reg.">
+            <input type="text" placeholder="Dosis">
+          </div>
+          <div class="ing-row" style="grid-template-columns:2fr 1fr 1fr;">
+            <input type="text" placeholder="Ej. Deltametrina">
+            <input type="text" placeholder="Reg.">
+            <input type="text" placeholder="Dosis">
+          </div>
+          <div class="ing-row" style="grid-template-columns:2fr 1fr 1fr;">
+            <input type="text" placeholder="">
+            <input type="text" placeholder="Reg.">
+            <input type="text" placeholder="Dosis">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRADO / LIMPIEZA -->
+    <div class="e-card">
+      <div class="e-card-head">Grado de Infestación y Limpieza</div>
+      <div class="e-card-body">
+        <div class="e-field">
+          <label>Grado de Infestación</label>
+          <div class="check-group one-col">
+            <label class="check-item"><input type="checkbox" name="grado" value="Bajo"> Bajo</label>
+            <label class="check-item"><input type="checkbox" name="grado" value="Moderado"> Moderado</label>
+            <label class="check-item"><input type="checkbox" name="grado" value="Alto"> Alto</label>
+            <label class="check-item"><input type="checkbox" name="grado" value="Muy Alto"> Muy Alto</label>
+          </div>
+        </div>
+        <div class="e-field">
+          <label>Limpieza y Orden</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="limpieza" value="Buena"> Buena</label>
+            <label class="radio-item"><input type="radio" name="limpieza" value="Regular"> Regular</label>
+            <label class="radio-item"><input type="radio" name="limpieza" value="Mala"> Mala</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="e-card">
+      <div class="e-card-head">Recomendaciones del Técnico</div>
+      <div class="e-card-body">
+        <div class="e-field">
+          <textarea id="recomendaciones" placeholder="Recomendaciones específicas para el cliente…" style="min-height:72px;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRÓXIMA VISITA -->
+    <div class="e-card">
+      <div class="e-card-head">Próxima Visita</div>
+      <div class="e-card-body">
+        <div class="e-field">
+          <label>Fecha</label>
+          <input type="date" id="proximaFecha">
+        </div>
+        <div class="e-field">
+          <label>Tipo</label>
+          <div class="check-group one-col">
+            <label class="check-item"><input type="checkbox" name="proxTipo" value="Garantía"> Garantía</label>
+            <label class="check-item"><input type="checkbox" name="proxTipo" value="Mantenimiento"> Mantenimiento</label>
+            <label class="check-item"><input type="checkbox" name="proxTipo" value="Seguimiento"> Seguimiento</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="updatePreview()">↻ Actualizar vista previa</button>
+      <button class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+      <button class="btn btn-outline" onclick="resetAll()">Limpiar todo</button>
+    </div>
+
+  </div><!-- /editor-panel -->
+
+  <!-- ══════════════════════════
+       PREVIEW PANEL
+  ══════════════════════════ -->
+  <div class="preview-panel">
+    <p class="preview-label">Vista previa del certificado</p>
+    <div class="cert" id="certDoc"></div>
+  </div>
+
+</div><!-- /screen-wrap -->
+
+<script>
+/* ── HELPERS ── */
+function checked(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
+}
+function radio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function certCb(isChecked) {
+  return `<span class="cert-checkbox${isChecked ? ' checked' : ''}"></span>`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${parseInt(d)} de ${months[parseInt(m)-1]} de ${y}`;
+}
+
+/* ── GET INGREDIENTS ── */
+function getIngredients() {
+  const rows = document.querySelectorAll('#ingRows .ing-row');
+  const result = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const vals = Array.from(inputs).map(i => i.value.trim());
+    if (vals.some(v => v !== '')) result.push(vals); // [activo, reg, dosis]
+  });
+  return result;
+}
+
+/* ── BUILD CERTIFICATE HTML ── */
+function buildCert() {
+  const folio      = val('folio');
+  const cliente    = val('cliente');
+  const fecha      = formatDate(val('fechaServicio'));
+  const direccion  = val('direccion');
+  const responsable= val('responsable');
+  const pago       = radio('pago');
+  const tiposSrv   = checked('tipo');
+  const areas      = checked('area');
+  const areaOtros  = val('areaOtros');
+  const plagas     = checked('plaga');
+  const plagaOtros = val('plagaOtros');
+  const obs        = val('observaciones');
+  const grados     = checked('grado');
+  const limpieza   = radio('limpieza');
+  const recom      = val('recomendaciones');
+  const proxFecha  = formatDate(val('proximaFecha'));
+  const proxTipos  = checked('proxTipo');
+  const ings       = getIngredients();
+
+  const TIPOS_SRV = ['Preventivo / Mantenimiento','Correctivo / Erradicación','Visita de Garantía','Servicio Especial'];
+  const AREAS_LIST = ['Perímetros exteriores','Recepción / Clientes','Mostrador / Barra','Sanitarios','Área de almacén','Muros y Zoclos','Cocina / Línea caliente','Refrigeradores / Tarjas','Coladeras / Tuberías','Plafones'];
+  const PLAGAS_LIST = ['Cucaracha Alemana','Cucaracha Americana','Araña','Alacrán','Hormiga','Grillo / Chapulín','Mosca','Mosquito','Ratón / Rata','Pulga / Chinche'];
+  const PROX_TIPOS = ['Garantía','Mantenimiento','Seguimiento'];
+
+  /* tipo servicio checks */
+  const tipoChecks = TIPOS_SRV.map(t =>
+    `<span class="tipo-check-item">${certCb(tiposSrv.includes(t))} ${t}</span>`
+  ).join('');
+
+  /* areas col */
+  const areasHTML = AREAS_LIST.map(a =>
+    `<div class="col-check-item">${certCb(areas.includes(a))} ${a}</div>`
+  ).join('') +
+  `<div class="col-check-item">${certCb(!!areaOtros)} Otros: ${areaOtros || '___________'}</div>`;
+
+  /* plagas col */
+  const plagasHTML = PLAGAS_LIST.map(p =>
+    `<div class="col-check-item">${certCb(plagas.includes(p))} ${p}</div>`
+  ).join('') +
+  `<div class="col-check-item">${certCb(!!plagaOtros)} Otros: ${plagaOtros || '___________'}</div>`;
+
+  /* ingredients rows — always show 3 rows */
+  const ingRowsNeeded = Math.max(3, ings.length);
+  let ingRowsHTML = '';
+  for (let i = 0; i < ingRowsNeeded; i++) {
+    const r = ings[i] || ['','',''];
+    ingRowsHTML += `<tr>
+      <td>${r[0]||''}</td>
+      <td>${r[1]||''}</td>
+      <td>${r[2]||''}</td>
+    </tr>`;
+  }
+
+  /* grado checks */
+  const GRADOS = ['Bajo','Moderado','Alto','Muy Alto'];
+  const gradoHTML = GRADOS.map(g =>
+    `<div class="col-check-item">${certCb(grados.includes(g))} ${g}</div>`
+  ).join('');
+
+  /* limpieza checks */
+  const LIMPIEZAS = ['Buena','Regular','Mala'];
+  const limpiezaHTML = LIMPIEZAS.map(l =>
+    `<div class="col-check-item">${certCb(limpieza===l)} ${l}</div>`
+  ).join('');
+
+  /* proxima tipos */
+  const proxTiposHTML = PROX_TIPOS.map(t =>
+    `<span class="tipo-check-item">${certCb(proxTipos.includes(t))} ${t}</span>`
+  ).join('');
+
+  return `
+    <!-- HEADER -->
+    <div class="cert-header">
+      <div class="logo-block">
+        <div class="cert-logo-wordmark">CONS<span class="a-red">A</span></div>
+        <div class="cert-logo-rule"></div>
+        <div class="cert-logo-tag">Control y Seguridad Ambiental</div>
+      </div>
+      <div class="cert-title-block">
+        <h1>Certificado de Servicio</h1>
+        <div class="cert-lic">Lic. Sanitaria COFEPRIS: 22 14 AP 00 83</div>
+      </div>
+    </div>
+
+    <!-- FOLIO -->
+    <div class="folio-row">
+      <span class="folio-label">Folio</span>
+      <span class="folio-value">CONSA-${folio || '_________'}</span>
+    </div>
+
+    <!-- CLIENTE / FECHA / DIRECCIÓN / RESPONSABLE / PAGO -->
+    <table class="info-table">
+      <tr>
+        <td class="lbl">Cliente</td>
+        <td class="val" style="width:40%;">${cliente || ''}</td>
+        <td class="lbl" style="width:110px;">Fecha de Servicio</td>
+        <td class="val">${fecha || ''}</td>
+      </tr>
+      <tr>
+        <td class="lbl">Dirección</td>
+        <td class="val" colspan="3">${direccion || ''}</td>
+      </tr>
+      <tr>
+        <td class="lbl">Responsable</td>
+        <td class="val">${responsable || ''}</td>
+        <td class="lbl">Forma de Pago</td>
+        <td class="val">
+          <div style="display:flex;gap:14px;">
+            <span class="tipo-check-item">${certCb(pago==='Efectivo')} Efectivo</span>
+            <span class="tipo-check-item">${certCb(pago==='Transferencia')} Transferencia</span>
+            <span class="tipo-check-item">${certCb(pago==='Terminal')} Terminal</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="lbl">Tipo de Servicio</td>
+        <td class="val" colspan="3">
+          <div class="tipo-checks">${tipoChecks}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ÁREA / PLAGA / OBSERVACIONES -->
+    <div class="three-col">
+      <div>
+        <div class="col-head">Área Tratada</div>
+        <div class="col-body">${areasHTML}</div>
+      </div>
+      <div>
+        <div class="col-head">Plaga Controlada</div>
+        <div class="col-body">${plagasHTML}</div>
+      </div>
+      <div class="obs-col">
+        <div class="col-head">Observaciones por Área</div>
+        <div class="col-body">
+          <div class="obs-lines">${obs || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INGREDIENTES -->
+    <table class="ing-table">
+      <thead>
+        <tr>
+          <th style="width:55%;">Ingrediente Activo</th>
+          <th style="width:23%;">Reg. COFEPRIS</th>
+          <th style="width:22%;">Dosis Aplicada</th>
+        </tr>
+      </thead>
+      <tbody>${ingRowsHTML}</tbody>
+    </table>
+
+    <!-- GRADO / LIMPIEZA / RECOMENDACIONES -->
+    <div class="bottom-three">
+      <div>
+        <div class="col-head">Grado de Infestación</div>
+        <div class="col-body">${gradoHTML}</div>
+      </div>
+      <div>
+        <div class="col-head">Limpieza y Orden</div>
+        <div class="col-body">${limpiezaHTML}</div>
+      </div>
+      <div>
+        <div class="col-head">Recomendaciones del Técnico</div>
+        <div class="col-body">
+          <div style="font-size:9.5px;color:var(--black);line-height:1.6;white-space:pre-wrap;">${recom || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRÓXIMA VISITA -->
+    <div class="proxima-row">
+      <div>
+        <div class="col-head">Próxima Visita</div>
+        <div class="proxima-body">
+          <div class="proxima-date">${proxFecha || 'Fecha: ___________________'}</div>
+          <div class="proxima-tipos">${proxTiposHTML}</div>
+        </div>
+      </div>
+      <div>
+        <div class="col-head" style="background:transparent;color:transparent;">.</div>
+        <div class="proxima-body" style="padding-top:10px;">
+          <div style="font-size:8.5px;color:var(--black);line-height:1.6;">
+            <strong>Nota importante:</strong> Posterior a la aplicación, no ingresar a las áreas tratadas
+            durante 1 a 2 horas con previa ventilación.<br>
+            <em>La garantía del servicio queda condicionada al cumplimiento del checklist
+            pre-servicio firmado por el cliente.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRMAS -->
+    <div class="sig-row">
+      <div class="sig-box">
+        <div class="sig-spacer"></div>
+        <div class="sig-label">Firma del Técnico Aplicador</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-spacer"></div>
+        <div class="sig-label">Nombre y Firma del Responsable</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="cert-footer">
+      <div class="cert-footer-left">
+        <div class="co-name">CONSA · Control y Seguridad Ambiental</div>
+        <div class="co-sub">Querétaro y Zona Metropolitana</div>
+      </div>
+      <div class="cert-footer-center">
+        Lic. Sanitaria COFEPRIS &nbsp;·&nbsp; Certificación Bayer &nbsp;·&nbsp; Syngenta
+      </div>
+      <div class="cert-footer-right">
+        <strong>442 274 3329</strong>
+        consafumigaciones@outlook.com
+      </div>
+    </div>
+  `;
+}
+
+/* ── UPDATE PREVIEW ── */
+function updatePreview() {
+  document.getElementById('certDoc').innerHTML = buildCert();
+}
+
+/* ── RESET ── */
+function resetAll() {
+  if (!confirm('¿Limpiar todos los campos?')) return;
+  document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
+  updatePreview();
+}
+
+/* ── AUTO-UPDATE on any input change ── */
+document.addEventListener('change', updatePreview);
+document.addEventListener('input', updatePreview);
+
+/* ── INIT ── */
+// Set today's date as default
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('fechaServicio').value = today;
+updatePreview();
+</script>
+</body>
+</html>
